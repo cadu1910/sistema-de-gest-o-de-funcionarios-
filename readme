@@ -1,0 +1,76 @@
+# Sistema de Gestão de Funcionários
+
+Este projeto é um sistema de gerenciamento de funcionários desenvolvido com SQL. Ele inclui funcionalidades para gerenciar funcionários, departamentos, cargos, salários e registros de presença.
+
+## Estrutura do Banco de Dados
+
+O banco de dados é composto pelas seguintes tabelas:
+
+- **departamentos**: Armazena os departamentos da empresa.
+- **cargos**: Armazena os cargos e seus respectivos salários base.
+- **funcionarios**: Armazena as informações pessoais dos funcionários, associando-os a um cargo e departamento.
+- **salarios**: Registra os pagamentos de salários realizados.
+- **presencas**: Mantém o registro de presença dos funcionários, com status como "Presente", "Ausente" ou "Licença".
+
+## Funcionalidades
+
+- Inserção, consulta, atualização e exclusão de dados referentes a funcionários, salários e presenças.
+- Consultas que permitem visualizar:
+  - Todos os funcionários com seus cargos e departamentos.
+  - Folha de pagamento de um mês específico.
+  - Presença dos funcionários em um determinado dia.
+  
+## Requisitos
+
+- **MySQL** ou outro banco de dados relacional compatível com SQL.
+
+## Instalação
+
+1. Clone o repositório:
+
+    
+    git clone https://github.com/seu-usuario/sistema-gestao-funcionarios.git
+    
+
+2. Acesse o diretório do projeto:
+
+    
+    cd sistema-gestao-funcionarios
+    
+
+3. Importe o arquivo SQL no seu banco de dados MySQL:
+
+    
+    mysql -u seu-usuario -p < sistema_gestao_funcionarios.sql
+    
+
+## Uso
+
+Após a criação do banco de dados, você pode executar consultas para gerenciar os funcionários e gerar relatórios de salários e presenças.
+
+### Exemplo de Consultas
+
+- Exibir todos os funcionários com seus cargos e departamentos:
+
+    
+    SELECT 
+      funcionarios.nome AS nome_funcionario,
+      funcionarios.sobrenome,
+      departamentos.nome_departamento,
+      cargos.nome_cargo,
+      funcionarios.data_contratacao
+    FROM funcionarios
+    JOIN departamentos ON funcionarios.departamento_id = departamentos.departamento_id
+    JOIN cargos ON funcionarios.cargo_id = cargos.cargo_id;
+    
+
+- Exibir a folha de pagamento de um mês:
+
+    
+    SELECT 
+      funcionarios.nome AS nome_funcionario,
+      funcionarios.sobrenome,
+      salarios.valor_salario,
+      salarios.data_pagamento
+    FROM salarios
+    JOIN funcionarios ON salarios.funcionario_id = funcionarios.funcionario
