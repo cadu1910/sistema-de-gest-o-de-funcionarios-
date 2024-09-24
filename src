@@ -1,0 +1,135 @@
+-- Criação do banco de dados
+DROP DATABASE IF EXISTS sistema_gestao_funcionarios;
+CREATE DATABASE sistema_gestao_funcionarios;
+
+-- Seleção do banco de dados
+USE sistema_gestao_funcionarios;
+
+-- Criação da tabela de departamentos
+CREATE TABLE departamentos (
+  departamento_id INT PRIMARY KEY AUTO_INCREMENT,
+  nome_departamento VARCHAR(100)
+);
+
+-- Criação da tabela de cargos
+CREATE TABLE cargos (
+  cargo_id INT PRIMARY KEY AUTO_INCREMENT,
+  nome_cargo VARCHAR(100),
+  salario_base DECIMAL(10, 2)
+);
+
+-- Criação da tabela de funcionários
+CREATE TABLE funcionarios (
+  funcionario_id INT PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(100),
+  sobrenome VARCHAR(100),
+  data_nascimento DATE,
+  cpf VARCHAR(14),
+  endereco VARCHAR(255),
+  telefone VARCHAR(20),
+  email VARCHAR(100),
+  data_contratacao DATE,
+  departamento_id INT,
+  cargo_id INT,
+  FOREIGN KEY (departamento_id) REFERENCES departamentos(departamento_id),
+  FOREIGN KEY (cargo_id) REFERENCES cargos(cargo_id)
+);
+
+-- Criação da tabela de salários
+CREATE TABLE salarios (
+  salario_id INT PRIMARY KEY AUTO_INCREMENT,
+  funcionario_id INT,
+  valor_salario DECIMAL(10, 2),
+  data_pagamento DATE,
+  FOREIGN KEY (funcionario_id) REFERENCES funcionarios(funcionario_id)
+);
+
+-- Criação da tabela de presença
+CREATE TABLE presencas (
+  presenca_id INT PRIMARY KEY AUTO_INCREMENT,
+  funcionario_id INT,
+  data_presenca DATE,
+  status_presenca VARCHAR(20), -- Presente, Ausente, Licença
+  FOREIGN KEY (funcionario_id) REFERENCES funcionarios(funcionario_id)
+);
+
+-- Inserção de dados na tabela de departamentos
+INSERT INTO departamentos (nome_departamento) VALUES
+('Recursos Humanos'),
+('TI'),
+('Financeiro'),
+('Vendas');
+
+-- Inserção de dados na tabela de cargos
+INSERT INTO cargos (nome_cargo, salario_base) VALUES
+('Analista de RH', 3500.00),
+('Desenvolvedor', 4500.00),
+('Contador', 4000.00),
+('Gerente de Vendas', 5000.00);
+
+-- Inserção de dados na tabela de funcionários
+INSERT INTO funcionarios (nome, sobrenome, data_nascimento, cpf, endereco, telefone, email, data_contratacao, departamento_id, cargo_id) VALUES
+('Ana', 'Silva', '1990-05-12', '123.456.789-00', 'Rua A, 123', '11999999999', 'ana@email.com', '2022-03-10', 1, 1),
+('Carlos', 'Pereira', '1988-11-22', '987.654.321-00', 'Rua B, 456', '11988888888', 'carlos@email.com', '2021-06-05', 2, 2),
+('Maria', 'Santos', '1992-02-15', '111.222.333-00', 'Rua C, 789', '11977777777', 'maria@email.com', '2020-08-15', 3, 3),
+('João', 'Costa', '1985-09-30', '444.555.666-00', 'Rua D, 101', '11966666666', 'joao@email.com', '2019-12-01', 4, 4);
+
+-- Inserção de dados na tabela de salários
+INSERT INTO salarios (funcionario_id, valor_salario, data_pagamento) VALUES
+(1, 3500.00, '2024-09-30'),
+(2, 4500.00, '2024-09-30'),
+(3, 4000.00, '2024-09-30'),
+(4, 5000.00, '2024-09-30');
+
+-- Inserção de dados na tabela de presenças
+INSERT INTO presencas (funcionario_id, data_presenca, status_presenca) VALUES
+(1, '2024-09-22', 'Presente'),
+(2, '2024-09-22', 'Presente'),
+(3, '2024-09-22', 'Ausente'),
+(4, '2024-09-22', 'Presente');
+
+-- Consulta para exibir todos os funcionários com seus cargos e departamentos
+SELECT 
+  funcionarios.nome AS nome_funcionario,
+  funcionarios.sobrenome,
+  departamentos.nome_departamento,
+  cargos.nome_cargo,
+  funcionarios.data_contratacao
+FROM funcionarios
+JOIN departamentos ON funcionarios.departamento_id = departamentos.departamento_id
+JOIN cargos ON funcionarios.cargo_id = cargos.cargo_id;
+
+-- Consulta para exibir a folha de pagamento de um mês
+SELECT 
+  funcionarios.nome AS nome_funcionario,
+  funcionarios.sobrenome,
+  salarios.valor_salario,
+  salarios.data_pagamento
+FROM salarios
+JOIN funcionarios ON salarios.funcionario_id = funcionarios.funcionario_id
+WHERE MONTH(salarios.data_pagamento) = 9 AND YEAR(salarios.data_pagamento) = 2024;
+
+-- Consulta para exibir a presença dos funcionários em um determinado dia
+SELECT 
+  funcionarios.nome AS nome_funcionario,
+  funcionarios.sobrenome,
+  presencas.data_presenca,
+  presencas.status_presenca
+FROM presencas
+JOIN funcionarios ON presencas.funcionario_id = funcionarios.funcionario_id
+WHERE presencas.data_presenca = '2024-09-22';
+
+-- Atualização do salário de um funcionário
+UPDATE salarios
+SET valor_salario = 3700.00
+WHERE funcionario_id = 1;
+
+-- Atualização do status de presença de um funcionário
+UPDATE presencas
+SET status_presenca = 'Licença'
+WHERE funcionario_id = 3 AND data_presenca = '2024-09-22';
+
+-- Exclusão de um funcionário e suas informações relacionadas (presença, salário)
+DELETE FROM presencas WHERE funcionario_id = 2;
+DELETE FROM salarios WHERE funcionario_id = 2;
+DELETE FROM funcionarios WHERE funcionario_id = 2;
