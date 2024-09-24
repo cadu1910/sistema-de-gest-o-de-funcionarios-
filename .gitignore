@@ -1,0 +1,15 @@
+# Arquivos e pastas a serem ignorados
+
+# Diretórios de sistema
+.DS_Store
+Thumbs.db
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+
+# Arquivos SQL gerados automaticamente
+*.sql
+
+# Configurações do ambiente de banco de dados
+.env
